@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class BowlingBallController : MonoBehaviour
 {
-    public float forwardForce = 800f;
-    public float sideForce = 200f;
+    public timingbar timingBar;
+    public float launchForce = 2f;
 
     private Rigidbody rb;
     private bool hasLaunched = false;
@@ -15,23 +15,30 @@ public class BowlingBallController : MonoBehaviour
 
     void Update()
     {
-        if (!hasLaunched)
+        if (hasLaunched) return;
+        if (timingBar == null) return;
+        if (rb == null) return;
+
+        if (timingBar.HasStopped())
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (timingBar.IsValidHit())
             {
-                rb.AddForce(Vector3.forward * forwardForce);
+                rb.AddForce(Vector3.forward * launchForce, ForceMode.Impulse);
                 hasLaunched = true;
             }
-
-            if (Input.GetKey(KeyCode.LeftArrow))
+            else
             {
-                transform.position += Vector3.left * 2f * Time.deltaTime;
-            }
-
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                transform.position += Vector3.right * 2f * Time.deltaTime;
+                Debug.Log("Ball will not launch because the slider missed the red zone.");
+                hasLaunched = true;
             }
         }
+    }
+
+    public void ResetBall(Vector3 startPosition)
+    {
+        transform.position = startPosition;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        hasLaunched = false;
     }
 }
