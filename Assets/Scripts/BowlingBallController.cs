@@ -4,6 +4,12 @@ public class BowlingBallController : MonoBehaviour
 {
     public timingbar timingBar;
     public float launchForce = 2f;
+    public AudioSource audioSource;
+    public AudioClip rollSound;
+    public AudioClip dropSound;
+    public AudioClip pinsStrike;
+
+    private bool pinSoundPlayed = false;
 
     private Rigidbody rb;
     private bool hasLaunched = false;
@@ -25,6 +31,12 @@ public class BowlingBallController : MonoBehaviour
             {
                 rb.AddForce(Vector3.forward * launchForce, ForceMode.Impulse);
                 hasLaunched = true;
+
+                audioSource.PlayOneShot(dropSound);
+
+                audioSource.clip = rollSound;
+                audioSource.loop = true;
+                audioSource.Play();
             }
             else
             {
@@ -40,5 +52,15 @@ public class BowlingBallController : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         hasLaunched = false;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Pin") && !pinSoundPlayed)
+        {
+                audioSource.Stop();
+                audioSource.PlayOneShot(pinsStrike);
+                pinSoundPlayed = true;
+        }
     }
 }
