@@ -18,6 +18,7 @@ public class BowlingBallController : MonoBehaviour
     public Vector3 intialpos;
     private bool pinSoundPlayed = false;
     public int throwCOUNT;
+    
 
     private Rigidbody rb;
     private bool hasLaunched = false;
