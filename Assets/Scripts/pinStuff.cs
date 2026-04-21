@@ -1,6 +1,7 @@
 using System.Net.NetworkInformation;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.ProBuilder.MeshOperations;
 
 public class pinStuff : MonoBehaviour
@@ -11,15 +12,20 @@ public class pinStuff : MonoBehaviour
     bool[] pinKnocked;
     float countdowntime = 3f;
     float timer = 0f;
+
     bool startcount = false;
     int score;
+    Vector3[] intialposPINS;
+    public timingbar timebar;
     void Start()
     {
          pins = GameObject.FindGameObjectsWithTag("Pin");
         allpins = new Rigidbody[pins.Length];
+        intialposPINS = new Vector3[pins.Length];
         for (int i = 0; i < pins.Length; i++)
         {
             allpins[i] = pins[i].GetComponent<Rigidbody>();
+            intialposPINS[i] = allpins[i].transform.position;
         }
         pinKnocked = new bool[pins.Length];
 
@@ -54,11 +60,15 @@ public class pinStuff : MonoBehaviour
 
                 countdowntime -= Time.deltaTime;
             }
-            if (countdowntime <= 0.01f && ball.getLaunch() == true) { 
+            if (countdowntime <= 0.01f && ball.getLaunch() == true) { //call this when pins stop knocking over bassically reseting the ball and timer info
             {
+                startcount = false;
+                countdowntime = 3.0f;
                 ball.setLaunch(false);
+                timebar.ResetBar();
                 endtimer();
-            }
+                   
+                }
          
                 //if pin is less than this angle
                 //pin counts as knocked down
@@ -71,23 +81,53 @@ public class pinStuff : MonoBehaviour
     }
     void endtimer()
     {
-        Debug.Log("called endtimer");
-        Debug.Log(score);
+        Debug.Log("called endtimer : \n");
         ball.ResetBall(ball.getStartPos());
-        if (score != 10) //delete all pins that were knocked UNLess all of them were knocked then it resets (strike)
+        if (ball.getThrowCount() <= 2)
         {
             for (int i = 0; i < pinKnocked.Length; i++)
             {
                 if (pinKnocked[i] == true)
+                {
                     pins[i].SetActive(false);
+                    score++;
+                }
+                //grab score and delete the ones that fell over for now
+            } 
+                
+                if (score == 10)
+                {
+                    if (ball.getThrowCount() == 1) Debug.Log("Strike!!!!!!!!");
+                    if (ball.getThrowCount() == 2) Debug.Log("Spare!!!!!!!!");
+       
+                } //call out a strike or spare
 
-
+            if (ball.getThrowCount() == 2 || score == 10)  //check if the score is 10 strike or spare or that the throw count is == 2 
+            {
+                Debug.Log("checking that the pins tried to reset\n");
+                for (int e = 0; e < pins.Length; e++)
+                {
+                    pins[e].SetActive(true);
+                    pins[e].transform.position = intialposPINS[e];  //set all the pins active 
+                }
+                ball.setThrowCount(0);
             }
-        }
-        else
-            Debug.Log("Strike!!!!!!!!");
-        
+            else  //else if we have another throw reset the pins to positions that are not knocked over 
+            {
+                for (int j = 0; j < pinKnocked.Length; j++)
+                {
+                    if (pinKnocked[j] == false)
+                    {
+                        pins[j].transform.position = intialposPINS[j];
+                    }
+                } 
+            }
 
 
+        } //end huge IF (ball.getThrowCount() <= 2)
+         
+
+
+            }//end timer function 
     }
-}
+

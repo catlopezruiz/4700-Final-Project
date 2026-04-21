@@ -10,6 +10,7 @@ public class BowlingBallController : MonoBehaviour
     public AudioClip pinsStrike;
     public Vector3 intialpos;
     private bool pinSoundPlayed = false;
+    public int throwCOUNT;
 
     private Rigidbody rb;
     private bool hasLaunched = false;
@@ -30,6 +31,7 @@ public class BowlingBallController : MonoBehaviour
         {
             if (timingBar.IsValidHit())
             {
+                throwCOUNT++;
                 rb.AddForce(Vector3.forward * launchForce, ForceMode.Impulse);
                 hasLaunched = true;
 
@@ -50,6 +52,14 @@ public class BowlingBallController : MonoBehaviour
     public bool getLaunch()
     {
         return hasLaunched;
+    }
+    public int getThrowCount()
+    {
+        return throwCOUNT;
+    }
+    public void setThrowCount(int throwCNT)
+    {
+        throwCOUNT = throwCNT;
     }
     public void setLaunch(bool launched)
     {
