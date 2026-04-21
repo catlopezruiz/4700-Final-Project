@@ -4,10 +4,17 @@ public class BowlingBallController : MonoBehaviour
 {
     public timingbar timingBar;
     public float launchForce = 2f;
+
+    [Header("Aiming")]
+    public float currentAngle = 0f;
+    public float maxAngle = 25f;
+    public float angleSpeed = 60f;
+
     public AudioSource audioSource;
     public AudioClip rollSound;
     public AudioClip dropSound;
     public AudioClip pinsStrike;
+
     public Vector3 intialpos;
     private bool pinSoundPlayed = false;
 
@@ -22,15 +29,35 @@ public class BowlingBallController : MonoBehaviour
 
     void Update()
     {
+        if (rb == null) return;
+
+    
+        if (!hasLaunched)
+        {
+            float input = 0f;
+
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+                input = -1f;
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+                input = 1f;
+
+            currentAngle += input * angleSpeed * Time.deltaTime;
+            currentAngle = Mathf.Clamp(currentAngle, -maxAngle, maxAngle);
+
+          
+            transform.rotation = Quaternion.Euler(0f, currentAngle, 0f);
+        }
+
         if (hasLaunched) return;
         if (timingBar == null) return;
-        if (rb == null) return;
 
         if (timingBar.HasStopped())
         {
             if (timingBar.IsValidHit())
             {
-                rb.AddForce(Vector3.forward * launchForce, ForceMode.Impulse);
+                Vector3 launchDirection = Quaternion.Euler(0f, currentAngle, 0f) * Vector3.forward;
+                rb.AddForce(launchDirection.normalized * launchForce, ForceMode.Impulse);
+
                 hasLaunched = true;
 
                 audioSource.PlayOneShot(dropSound);
@@ -51,6 +78,7 @@ public class BowlingBallController : MonoBehaviour
     {
         return hasLaunched;
     }
+
     public void setLaunch(bool launched)
     {
         hasLaunched = launched;
@@ -59,21 +87,27 @@ public class BowlingBallController : MonoBehaviour
     public void ResetBall(Vector3 startPosition)
     {
         transform.position = startPosition;
+        transform.rotation = Quaternion.identity;
+        currentAngle = 0f;
+
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         hasLaunched = false;
+        pinSoundPlayed = false;
     }
+
     public Vector3 getStartPos()
     {
         return intialpos;
     }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Pin") && !pinSoundPlayed)
         {
-                audioSource.Stop();
-                audioSource.PlayOneShot(pinsStrike);
-                pinSoundPlayed = true;
+            audioSource.Stop();
+            audioSource.PlayOneShot(pinsStrike);
+            pinSoundPlayed = true;
         }
     }
 }

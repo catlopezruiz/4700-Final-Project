@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "CS4700 final game project.slnx"
+    "dotnet.defaultSolution": "4700-Final-Project.slnx"
 }
