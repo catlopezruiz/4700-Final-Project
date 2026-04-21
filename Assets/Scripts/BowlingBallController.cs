@@ -5,10 +5,21 @@ public class BowlingBallController : MonoBehaviour
     public timingbar timingBar;
     public float launchForce = 2f;
 
+    [Header("Horizontal Movement")]
+    public float moveSpeed = 5f;
+    public float gutterLeftEdge = -11.1f;
+    public float gutterRightEdge = 11.1f;
+    public float sidePadding = 1.5f;
+
     [Header("Aiming")]
     public float currentAngle = 0f;
     public float maxAngle = 25f;
     public float angleSpeed = 60f;
+
+    [Header("Controls")]
+    public KeyCode toggleKey = KeyCode.Tab;
+
+    private bool isAimingMode = false;
 
     public AudioSource audioSource;
     public AudioClip rollSound;
@@ -32,19 +43,45 @@ public class BowlingBallController : MonoBehaviour
     {
         if (rb == null) return;
 
+        if (Input.GetKeyDown(toggleKey))
+        {
+            isAimingMode = !isAimingMode;
+            Debug.Log(isAimingMode ? "AIM MODE" : "MOVE MODE");
+        }
+
         if (!hasLaunched)
         {
-            float input = 0f;
+            if (!isAimingMode)
+            {
+                float moveInput = 0f;
 
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-                input = -1f;
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-                input = 1f;
+                if (Input.GetKey(KeyCode.A))
+                    moveInput = -1f;
+                if (Input.GetKey(KeyCode.D))
+                    moveInput = 1f;
 
-            currentAngle += input * angleSpeed * Time.deltaTime;
-            currentAngle = Mathf.Clamp(currentAngle, -maxAngle, maxAngle);
+                float leftLimit = gutterLeftEdge + sidePadding;
+                float rightLimit = gutterRightEdge - sidePadding;
 
-            transform.rotation = Quaternion.Euler(0f, currentAngle, 0f);
+                Vector3 pos = transform.position;
+                pos.x += moveInput * moveSpeed * Time.deltaTime;
+                pos.x = Mathf.Clamp(pos.x, leftLimit, rightLimit);
+                transform.position = pos;
+            }
+            else
+            {
+                float angleInput = 0f;
+
+                if (Input.GetKey(KeyCode.A))
+                    angleInput = -1f;
+                if (Input.GetKey(KeyCode.D))
+                    angleInput = 1f;
+
+                currentAngle += angleInput * angleSpeed * Time.deltaTime;
+                currentAngle = Mathf.Clamp(currentAngle, -maxAngle, maxAngle);
+
+                transform.rotation = Quaternion.Euler(0f, currentAngle, 0f);
+            }
         }
 
         if (hasLaunched) return;
