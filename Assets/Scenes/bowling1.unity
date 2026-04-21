@@ -1133,6 +1133,7 @@ MonoBehaviour:
   dropSound: {fileID: 8300000, guid: e23ddb2a4a12b3d40a747b28ae622c18, type: 3}
   pinsStrike: {fileID: 8300000, guid: 09b2433e1f3261a43894a04982775f5b, type: 3}
   intialpos: {x: 0, y: 0, z: 0}
+  throwCOUNT: 0
 --- !u!82 &347232659
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8573,6 +8574,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   allpins: []
   ball: {fileID: 347232655}
+  timebar: {fileID: 123070072}
 --- !u!1 &2095449671 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7093915985094020383, guid: 2018c95261fd2af4695a11553655084c, type: 3}

@@ -17,6 +17,7 @@ public class BowlingBallController : MonoBehaviour
 
     public Vector3 intialpos;
     private bool pinSoundPlayed = false;
+    public int throwCOUNT;
 
     private Rigidbody rb;
     private bool hasLaunched = false;
@@ -31,7 +32,6 @@ public class BowlingBallController : MonoBehaviour
     {
         if (rb == null) return;
 
-    
         if (!hasLaunched)
         {
             float input = 0f;
@@ -44,7 +44,6 @@ public class BowlingBallController : MonoBehaviour
             currentAngle += input * angleSpeed * Time.deltaTime;
             currentAngle = Mathf.Clamp(currentAngle, -maxAngle, maxAngle);
 
-          
             transform.rotation = Quaternion.Euler(0f, currentAngle, 0f);
         }
 
@@ -55,6 +54,8 @@ public class BowlingBallController : MonoBehaviour
         {
             if (timingBar.IsValidHit())
             {
+                throwCOUNT++;
+
                 Vector3 launchDirection = Quaternion.Euler(0f, currentAngle, 0f) * Vector3.forward;
                 rb.AddForce(launchDirection.normalized * launchForce, ForceMode.Impulse);
 
@@ -77,6 +78,16 @@ public class BowlingBallController : MonoBehaviour
     public bool getLaunch()
     {
         return hasLaunched;
+    }
+
+    public int getThrowCount()
+    {
+        return throwCOUNT;
+    }
+
+    public void setThrowCount(int throwCNT)
+    {
+        throwCOUNT = throwCNT;
     }
 
     public void setLaunch(bool launched)
