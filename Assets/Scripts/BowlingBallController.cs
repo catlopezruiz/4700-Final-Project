@@ -46,6 +46,12 @@ public class BowlingBallController : MonoBehaviour
         }
     }
 
+    public bool getLaunch()
+    {
+        return hasLaunched;
+    }
+    
+
     public void ResetBall(Vector3 startPosition)
     {
         transform.position = startPosition;
@@ -53,7 +59,10 @@ public class BowlingBallController : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         hasLaunched = false;
     }
-
+    public Vector3 getStartPos()
+    {
+        return transform.position;
+    }
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Pin") && !pinSoundPlayed)
