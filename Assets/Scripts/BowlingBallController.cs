@@ -8,7 +8,7 @@ public class BowlingBallController : MonoBehaviour
     public AudioClip rollSound;
     public AudioClip dropSound;
     public AudioClip pinsStrike;
-
+    public Vector3 intialpos;
     private bool pinSoundPlayed = false;
 
     private Rigidbody rb;
@@ -17,6 +17,7 @@ public class BowlingBallController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        intialpos = transform.position;
     }
 
     void Update()
@@ -50,7 +51,10 @@ public class BowlingBallController : MonoBehaviour
     {
         return hasLaunched;
     }
-    
+    public void setLaunch(bool launched)
+    {
+        hasLaunched = launched;
+    }
 
     public void ResetBall(Vector3 startPosition)
     {
@@ -61,7 +65,7 @@ public class BowlingBallController : MonoBehaviour
     }
     public Vector3 getStartPos()
     {
-        return transform.position;
+        return intialpos;
     }
     void OnCollisionEnter(Collision collision)
     {
