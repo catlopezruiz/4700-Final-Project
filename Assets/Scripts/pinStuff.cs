@@ -85,6 +85,7 @@ public class pinStuff : MonoBehaviour
     void endtimer()
     {
         Debug.Log("called endtimer : \n");
+      
         ball.ResetBall(ball.getStartPos());
         if (ball.getThrowCount() <= 2)
         {
@@ -121,6 +122,7 @@ public class pinStuff : MonoBehaviour
                     allpins[e].angularVelocity = Vector3.zero;//set all the pins active 
                 }
                 ball.setThrowCount(0);
+                score = 0;
             }
             else  //else if we have another throw reset the pins to positions that are not knocked over 
             {

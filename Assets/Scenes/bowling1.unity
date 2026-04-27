@@ -953,7 +953,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BowlingBallController
   timingBar: {fileID: 123070072}
-  launchForce: 150
+  launchForce: 250
   currentAngle: 0
   maxAngle: 25
   angleSpeed: 60

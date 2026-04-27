@@ -51,7 +51,7 @@ public class BowlingBallController : MonoBehaviour
         if (hasLaunched) return;
         if (timingBar == null) return;
 
-        if (timingBar.HasStopped())
+        if (timingBar.HasStopped() && !hasLaunched)
         {
             if (timingBar.IsValidHit())
             {
