@@ -14,7 +14,7 @@ public class pinStuff : MonoBehaviour
     float timer = 0f;
    
     public Scoretrack scoretrack;
-    bool startcount = false;
+    public bool startcount = false;
     int score;
     Vector3[] intialposPINS;
     public timingbar timebar;
@@ -145,5 +145,7 @@ public class pinStuff : MonoBehaviour
         roundIndex++;
 
     }//end timer function 
+
+    public int getscore () { return score; }
     }
 
