@@ -29,6 +29,7 @@ public class BowlingBallController : MonoBehaviour
     public Vector3 intialpos;
     private bool pinSoundPlayed = false;
     public int throwCOUNT;
+    
 
     private Rigidbody rb;
     private bool hasLaunched = false;
@@ -87,7 +88,7 @@ public class BowlingBallController : MonoBehaviour
         if (hasLaunched) return;
         if (timingBar == null) return;
 
-        if (timingBar.HasStopped())
+        if (timingBar.HasStopped() && !hasLaunched)
         {
             if (timingBar.IsValidHit())
             {

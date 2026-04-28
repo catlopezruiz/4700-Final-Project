@@ -12,16 +12,19 @@ public class pinStuff : MonoBehaviour
     bool[] pinKnocked;
     float countdowntime = 3f;
     float timer = 0f;
-
+   
+    public Scoretrack scoretrack;
     bool startcount = false;
     int score;
     Vector3[] intialposPINS;
     public timingbar timebar;
+    int roundIndex = 0;
     void Start()
     {
          pins = GameObject.FindGameObjectsWithTag("Pin");
         allpins = new Rigidbody[pins.Length];
         intialposPINS = new Vector3[pins.Length];
+        scoretrack = GetComponent<Scoretrack>();
         for (int i = 0; i < pins.Length; i++)
         {
             allpins[i] = pins[i].GetComponent<Rigidbody>();
@@ -82,6 +85,7 @@ public class pinStuff : MonoBehaviour
     void endtimer()
     {
         Debug.Log("called endtimer : \n");
+      
         ball.ResetBall(ball.getStartPos());
         if (ball.getThrowCount() <= 2)
         {
@@ -93,9 +97,12 @@ public class pinStuff : MonoBehaviour
                     score++;
                 }
                 //grab score and delete the ones that fell over for now
-            } 
-                
-                if (score == 10)
+            }
+
+            scoretrack.setScore(score, ball.getThrowCount());
+
+
+            if (score == 10)
                 {
                     if (ball.getThrowCount() == 1) Debug.Log("Strike!!!!!!!!");
                     if (ball.getThrowCount() == 2) Debug.Log("Spare!!!!!!!!");
@@ -108,9 +115,14 @@ public class pinStuff : MonoBehaviour
                 for (int e = 0; e < pins.Length; e++)
                 {
                     pins[e].SetActive(true);
-                    pins[e].transform.position = intialposPINS[e];  //set all the pins active 
+                    pins[e].transform.position = intialposPINS[e];
+                    pins[e].transform.position = intialposPINS[e] + new Vector3(0, 0.1f, 0);
+                    pins[e].transform.rotation = Quaternion.identity;
+                    allpins[e].linearVelocity = Vector3.zero;
+                    allpins[e].angularVelocity = Vector3.zero;//set all the pins active 
                 }
                 ball.setThrowCount(0);
+                score = 0;
             }
             else  //else if we have another throw reset the pins to positions that are not knocked over 
             {
@@ -118,16 +130,20 @@ public class pinStuff : MonoBehaviour
                 {
                     if (pinKnocked[j] == false)
                     {
-                        pins[j].transform.position = intialposPINS[j];
+                        pins[j].transform.position = intialposPINS[j] + new Vector3(0, 0.1f, 0);
+                        pins[j].transform.rotation = Quaternion.identity;
+                        allpins[j].linearVelocity = Vector3.zero;      
+                        allpins[j].angularVelocity = Vector3.zero;
                     }
                 } 
             }
 
 
         } //end huge IF (ball.getThrowCount() <= 2)
-         
 
+        scoretrack.setRoundIndex(roundIndex);
+        roundIndex++;
 
-            }//end timer function 
+    }//end timer function 
     }
 
