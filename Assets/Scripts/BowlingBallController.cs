@@ -162,6 +162,10 @@ public class BowlingBallController : MonoBehaviour
     {
         return hasLaunched;
     }
+    public Vector3 getStartPos()
+    {
+        return spawnPosition;
+    }
 
     public int getThrowCount()
     {
