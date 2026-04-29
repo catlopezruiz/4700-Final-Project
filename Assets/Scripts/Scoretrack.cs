@@ -29,16 +29,19 @@ public class Scoretrack : MonoBehaviour
     {
         if (scores == null || roundIndex >= scores.Length)
         {
-            Debug.LogError("Scoreboard is full or not initialized!");
+            Debug.LogError("Scoreboard is full");
             return;
         }
         if (throws == 1)
             scores[roundIndex].firstThrow = points;
+        //update the score on the text ui to show the first points "x  |   0" 
         else
             scores[roundIndex].SecondThrow = points;
+        //update the score on the text ui to show the first points "x  |   x" 
 
         if (scores[roundIndex].firstThrow == 10)
             scores[roundIndex].SecondThrow = 0; //give second a dummy value if there is a strike 
+        //update the score on the text ui to show strike spare or the total score 
 
     }
 
