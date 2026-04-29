@@ -581,7 +581,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: c769b716fa1444cb9adf4551f6e7d5ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1880,6 +1880,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Pin
       objectReference: {fileID: 0}
+    - target: {fileID: 2104563172713580009, guid: 2018c95261fd2af4695a11553655084c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 38c272c42d1c7434d89f9ddcbe8e8b42, type: 2}
     - target: {fileID: 2489159159464621496, guid: 2018c95261fd2af4695a11553655084c, type: 3}
       propertyPath: m_LocalScale.x
       value: 10
@@ -1912,6 +1916,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Pin
       objectReference: {fileID: 0}
+    - target: {fileID: 8247994413960396516, guid: 2018c95261fd2af4695a11553655084c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3f8927304f966413ca68aee57a38edf2, type: 2}
     - target: {fileID: 8315918269825178079, guid: 2018c95261fd2af4695a11553655084c, type: 3}
       propertyPath: m_TagString
       value: Pin
@@ -2118,7 +2126,6 @@ MonoBehaviour:
   rollSound: {fileID: 0}
   dropSound: {fileID: 0}
   pinsStrike: {fileID: 0}
-  intialpos: {x: 0, y: 0, z: 0}
   throwCOUNT: 0
 --- !u!82 &347232659
 AudioSource:
@@ -2959,7 +2966,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.46874, y: 0.3, z: 38.01}
-  m_LocalScale: {x: 1.2375, y: 1, z: 1}
+  m_LocalScale: {x: 1.2375, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 347232654}
@@ -3019,7 +3026,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: cee77bba45c464cdf8fe6564be5e6c9c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5498,7 +5505,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: d99e4206a364e4fe99317457759ce7e7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -11424,7 +11431,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: 8b55c48b101534845b148b513e338aac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14740,6 +14747,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Scoretrack
   frames: 10
+  scoreText: {fileID: 0}
+  scoreTMPText: {fileID: 0}
+  roundScoreTexts: []
 --- !u!1 &2095449671 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7093915985094020383, guid: 2018c95261fd2af4695a11553655084c, type: 3}
@@ -14871,7 +14881,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: d99e4206a364e4fe99317457759ce7e7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
