@@ -1,14 +1,21 @@
-using UnityEditor.Build.Player;
+
 using UnityEngine;
+using UnityEngine.UI; // For Unity UI Text
+using TMPro; // For TextMeshPro support
+
 
 public class Scoretrack : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     scoreInfo[] scores;
     public int frames = 10;
     int roundIndex = 0;
 
-     void Awake()
+    // UI reference (assign in Inspector)
+    public Text scoreText; // For Unity UI
+    public TMP_Text scoreTMPText; // For TextMeshPro
+    public TMP_Text[] roundScoreTexts; // Assign 10 elements in Inspector, one for each round
+
+    void Awake()
     {
         scores = new scoreInfo[10];
         for (int i = 0; i < scores.Length; i++)
@@ -34,15 +41,39 @@ public class Scoretrack : MonoBehaviour
         }
         if (throws == 1)
             scores[roundIndex].firstThrow = points;
-        //update the score on the text ui to show the first points "x  |   0" 
         else
             scores[roundIndex].SecondThrow = points;
-        //update the score on the text ui to show the first points "x  |   x" 
 
         if (scores[roundIndex].firstThrow == 10)
-            scores[roundIndex].SecondThrow = 0; //give second a dummy value if there is a strike 
-        //update the score on the text ui to show strike spare or the total score 
+            scores[roundIndex].SecondThrow = 0; // Strike
 
+        // Only update UI when round is complete (2nd throw or strike)
+        if (throws == 2 || scores[roundIndex].firstThrow == 10)
+        {
+            UpdateScoreUI();
+        }
+    }
+
+    // Call this to update the UI text with all scores
+    void UpdateScoreUI()
+    {
+        string scoreDisplay = "";
+        int cumulative = 0;
+        for (int i = 0; i < scores.Length; i++)
+        {
+            int roundTotal = scores[i].firstThrow + scores[i].SecondThrow;
+            cumulative += roundTotal;
+            scoreDisplay += $"Round {i + 1}: {scores[i].firstThrow} | {scores[i].SecondThrow}\n";
+        }
+        // Only update the current round's TMP_Text
+        if (roundScoreTexts != null && roundIndex >= 0 && roundIndex < roundScoreTexts.Length && roundScoreTexts[roundIndex] != null)
+        {
+            roundScoreTexts[roundIndex].text = $"R{roundIndex + 1}: {cumulative}";
+        }
+        if (scoreText != null)
+            scoreText.text = scoreDisplay;
+        if (scoreTMPText != null)
+            scoreTMPText.text = scoreDisplay;
     }
 
 }
