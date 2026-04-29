@@ -26,23 +26,54 @@ public class BowlingBallController : MonoBehaviour
     public AudioClip dropSound;
     public AudioClip pinsStrike;
 
-    public Vector3 intialpos;
     private bool pinSoundPlayed = false;
     public int throwCOUNT;
-    
 
     private Rigidbody rb;
     private bool hasLaunched = false;
 
+    private bool missedRedZone = false;
+
+    // ✅ NEW: true spawn position
+    private Vector3 spawnPosition;
+    private Quaternion spawnRotation;
+
+    // delay system
+    private float resetDelayTimer = 0f;
+    private bool waitingToReset = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        intialpos = transform.position;
+
+        // ✅ store ORIGINAL spawn once
+        spawnPosition = transform.position;
+        spawnRotation = transform.rotation;
     }
 
     void Update()
     {
         if (rb == null) return;
+
+        // ✅ delayed reset
+        if (waitingToReset)
+        {
+            resetDelayTimer -= Time.deltaTime;
+
+            if (resetDelayTimer <= 0f)
+            {
+                ResetBall();
+
+                if (timingBar != null)
+                {
+                    timingBar.ResetBar();
+                }
+
+                waitingToReset = false;
+            }
+
+            return;
+        }
 
         if (Input.GetKeyDown(toggleKey))
         {
@@ -99,15 +130,29 @@ public class BowlingBallController : MonoBehaviour
 
                 hasLaunched = true;
 
-                audioSource.PlayOneShot(dropSound);
+                if (audioSource != null && dropSound != null)
+                {
+                    audioSource.PlayOneShot(dropSound);
+                }
 
-                audioSource.clip = rollSound;
-                audioSource.loop = true;
-                audioSource.Play();
+                if (audioSource != null && rollSound != null)
+                {
+                    audioSource.clip = rollSound;
+                    audioSource.loop = true;
+                    audioSource.Play();
+                }
             }
             else
             {
-                Debug.Log("Ball will not launch because the slider missed the red zone.");
+                Debug.Log("Missed red zone. Resetting in 3 seconds...");
+
+                throwCOUNT++;
+                missedRedZone = true;
+
+                // ✅ start delay
+                resetDelayTimer = 3f;
+                waitingToReset = true;
+
                 hasLaunched = true;
             }
         }
@@ -133,29 +178,48 @@ public class BowlingBallController : MonoBehaviour
         hasLaunched = launched;
     }
 
-    public void ResetBall(Vector3 startPosition)
+    public bool getMissedRedZone()
     {
-        transform.position = startPosition;
-        transform.rotation = Quaternion.identity;
+        return missedRedZone;
+    }
+
+    public void clearMissedRedZone()
+    {
+        missedRedZone = false;
+    }
+
+    // ✅ UPDATED RESET (always goes to original spawn)
+    public void ResetBall()
+    {
+        transform.position = spawnPosition;
+        transform.rotation = spawnRotation;
         currentAngle = 0f;
 
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         hasLaunched = false;
         pinSoundPlayed = false;
-    }
 
-    public Vector3 getStartPos()
-    {
-        return intialpos;
+        if (audioSource != null)
+        {
+            audioSource.Stop();
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Pin") && !pinSoundPlayed)
         {
-            audioSource.Stop();
-            audioSource.PlayOneShot(pinsStrike);
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+
+                if (pinsStrike != null)
+                {
+                    audioSource.PlayOneShot(pinsStrike);
+                }
+            }
+
             pinSoundPlayed = true;
         }
     }
