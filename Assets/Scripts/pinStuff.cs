@@ -11,8 +11,7 @@ public class pinStuff : MonoBehaviour
     public BowlingBallController ball;
     bool[] pinKnocked;
     float countdowntime = 3f;
-    float timer = 0f;
-   
+
     public Scoretrack scoretrack;
     public bool startcount = false;
     int score;
@@ -77,28 +76,23 @@ public class pinStuff : MonoBehaviour
     {
         Debug.Log("called endtimer : \n");
 
-        ball.ResetBall(ball.getStartPos());
+        ball.ResetBall();
 
         if (ball.getThrowCount() <= 2)
         {
-          
             int pinsKnockedThisThrow = 0;
 
             for (int i = 0; i < pinKnocked.Length; i++)
             {
-               
                 if (pins[i].activeSelf && pinKnocked[i] == true)
                 {
                     pins[i].SetActive(false);
                     score++;
                     pinsKnockedThisThrow++;
-
-                   
                     pinKnocked[i] = false;
                 }
             }
 
-           
             if (pinsKnockedThisThrow == 0)
             {
                 Debug.Log("No pins hit this throw");
@@ -149,5 +143,8 @@ public class pinStuff : MonoBehaviour
         roundIndex++;
     }
 
-    public int getscore() { return score; }
+    public int getscore()
+    {
+        return score;
+    }
 }
