@@ -1,8 +1,12 @@
 using System.Net.NetworkInformation;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
+
 
 public class pinStuff : MonoBehaviour
 {
@@ -11,13 +15,16 @@ public class pinStuff : MonoBehaviour
     public BowlingBallController ball;
     bool[] pinKnocked;
     float countdowntime = 3f;
-
+    int totalscore = 0;
     public Scoretrack scoretrack;
     public bool startcount = false;
     int score;
     Vector3[] intialposPINS;
     public timingbar timebar;
     int roundIndex = 0;
+    public TMP_Text scoreTMPTexttotal;
+    public GameObject endcanvas;
+    bool cancel = false;
 
     void Start()
     {
@@ -37,6 +44,16 @@ public class pinStuff : MonoBehaviour
 
     void Update()
     {
+        if (cancel == true)
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                SceneManager.LoadScene(0);
+            }
+
+
+
+
+
         if (ball.getLaunch() == true)
         {
             for (int i = 0; i < allpins.Length; i++)
@@ -93,6 +110,8 @@ public class pinStuff : MonoBehaviour
                 }
             }
 
+            totalscore += score;
+
             if (pinsKnockedThisThrow == 0)
             {
                 Debug.Log("No pins hit this throw");
@@ -141,6 +160,18 @@ public class pinStuff : MonoBehaviour
 
         scoretrack.setRoundIndex(roundIndex);
         roundIndex++;
+
+        if (roundIndex == 10)
+        {
+            cancel = true;
+            timebar.DisableBar();
+            endcanvas.SetActive(true);
+            scoreTMPTexttotal.text = "Congrats you won your total score is: " + totalscore + "\n press 1 to return to home!";
+
+
+
+        }
+
     }
 
     public int getscore()
