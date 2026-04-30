@@ -5,6 +5,8 @@ public class BowlingBallController : MonoBehaviour
     public timingbar timingBar;
     public float launchForce = 2f;
 
+    public GameObject pointer;
+
     [Header("Horizontal Movement")]
     public float moveSpeed = 5f;
     public float gutterLeftEdge = -11.1f;
@@ -34,11 +36,11 @@ public class BowlingBallController : MonoBehaviour
 
     private bool missedRedZone = false;
 
-    // ✅ NEW: true spawn position
+    
     private Vector3 spawnPosition;
     private Quaternion spawnRotation;
 
-    // delay system
+    
     private float resetDelayTimer = 0f;
     private bool waitingToReset = false;
 
@@ -46,7 +48,7 @@ public class BowlingBallController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        // ✅ store ORIGINAL spawn once
+       
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
     }
@@ -55,7 +57,9 @@ public class BowlingBallController : MonoBehaviour
     {
         if (rb == null) return;
 
-        // ✅ delayed reset
+        if (hasLaunched) pointer.SetActive(false);
+        else pointer.SetActive(true);
+       
         if (waitingToReset)
         {
             resetDelayTimer -= Time.deltaTime;
@@ -149,7 +153,7 @@ public class BowlingBallController : MonoBehaviour
                 throwCOUNT++;
                 missedRedZone = true;
 
-                // ✅ start delay
+                
                 resetDelayTimer = 3f;
                 waitingToReset = true;
 
