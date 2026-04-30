@@ -19,6 +19,7 @@ public class timingbar : MonoBehaviour
 
     void Start()
     {
+        speed = difficulties1.speed;
         pointer.anchoredPosition = start.anchoredPosition;
     }
 
