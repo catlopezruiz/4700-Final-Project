@@ -4,7 +4,7 @@ public class ballrestFloor : MonoBehaviour
 {
     public BowlingBallController ball;
     bool balltouched = false;
-    float countdowntime = 5f;
+    float countdowntime = 2f;
     public timingbar timebar;
     public pinStuff pin;
     public int pincheck;

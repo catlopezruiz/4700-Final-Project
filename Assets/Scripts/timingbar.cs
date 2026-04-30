@@ -95,4 +95,12 @@ public class timingbar : MonoBehaviour
         hasStopped = false;
         validHit = false;
     }
+
+    public void DisableBar()
+    {
+        hasStopped = true; 
+        this.enabled = false;
+
+        
+    }
 }
