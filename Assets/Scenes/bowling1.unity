@@ -1533,7 +1533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b24c579a782439a4b8ab3e7eb8493c12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ballrestFloor
-  ball: {fileID: 0}
+  ball: {fileID: 1503547018}
   timebar: {fileID: 123070072}
   pin: {fileID: 2078868445}
   pincheck: 0
@@ -16667,6 +16667,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4119068691733466346, guid: 4dae65bba00c04f4d91706ee64e3f5d0, type: 3}
   m_PrefabInstance: {fileID: 1549030519}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1503547018 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1314015997502121939, guid: 4dae65bba00c04f4d91706ee64e3f5d0, type: 3}
+  m_PrefabInstance: {fileID: 1549030519}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f95b947c2ebc6a4e8e3db980b96e5d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BowlingBallController
 --- !u!1 &1517688201
 GameObject:
   m_ObjectHideFlags: 0
@@ -19141,7 +19152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   allpins: []
-  ball: {fileID: 0}
+  ball: {fileID: 1503547018}
   scoretrack: {fileID: 2078868446}
   startcount: 0
   timebar: {fileID: 123070072}
