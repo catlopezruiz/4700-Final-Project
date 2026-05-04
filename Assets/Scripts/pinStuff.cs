@@ -76,7 +76,7 @@ public class pinStuff : MonoBehaviour
 
     public void endtimer()
     {
-        Debug.Log("called endtimer : \n");
+        Debug.Log("pinStuff: endtimer called");
 
         ball.ResetBall();
 
