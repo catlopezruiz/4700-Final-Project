@@ -16,16 +16,12 @@ public class ballrestFloor : MonoBehaviour
 
     void Update()
     {
-        if (balltouched && ball.getLaunch() == true && pin.startcount == false)
-        {
-            countdowntime -= Time.deltaTime;
-        }
-
-        if (countdowntime <= 0.01f)
+        if (countdowntime <= 0.01f && balltouched && ball.getLaunch() && pin.startcount == false)
         {
             ball.setLaunch(false);
             timebar.ResetBar();
-            ball.ResetBall();
+
+            pin.endtimer();
 
             balltouched = false;
             countdowntime = 5f;
