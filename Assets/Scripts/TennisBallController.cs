@@ -46,7 +46,7 @@ public class TennisBallController : MonoBehaviour
 
     [Header("Speed Tuning")]
     public float travelToBounceSpeedMultiplier = 1.5f;
-    public float bounceToHitSpeedMultiplier = 0.6f;
+    public float bounceToHitSpeedMultiplier = 0.5f;
 
     [Header("References")]
     public TennisGameManager gameManager;
@@ -70,6 +70,12 @@ public class TennisBallController : MonoBehaviour
 
     public float baseMarkerSpeed = 350f;
     public float maxMarkerSpeed = 750f;
+
+    [Header("Advanced Bounce Points")]
+    public Transform aiBounceCenterToLeft;
+    public Transform aiBounceCenterToRight;
+    public Transform playerBounceCenterToLeft;
+    public Transform playerBounceCenterToRight;
 
     [Header("Arc")]
     public float bounceArcHeight = 1.2f;
@@ -213,7 +219,7 @@ public class TennisBallController : MonoBehaviour
         }
     }
 
-    void PlayerServeToAI()
+ void PlayerServeToAI()
 {
     rallyCount = 1;
     IncreaseSpeed();
@@ -223,7 +229,22 @@ public class TennisBallController : MonoBehaviour
     travelingToBounce = true;
     travelingToHitPoint = false;
 
-    BeginTravel(aiBounceTargets[currentAILaneIndex]);
+    Transform serveBounceTarget;
+
+    if (currentAILaneIndex == 0)
+    {
+        serveBounceTarget = aiBounceCenterToLeft;
+    }
+    else if (currentAILaneIndex == 2)
+    {
+        serveBounceTarget = aiBounceCenterToRight;
+    }
+    else
+    {
+        serveBounceTarget = aiBounceTargets[1];
+    }
+
+    BeginTravel(serveBounceTarget);
 }
 
     void StartAIServe()
@@ -267,14 +288,10 @@ public class TennisBallController : MonoBehaviour
    void AIServeToPlayer()
 {
     if (playerMovementScript != null)
-    {
         playerMovementScript.enabled = true;
-    }
 
     if (aiRacketSwing != null)
-    {
         aiRacketSwing.Swing();
-    }
 
     rallyCount = 1;
     IncreaseSpeed();
@@ -287,29 +304,63 @@ public class TennisBallController : MonoBehaviour
     travelingToBounce = true;
     travelingToHitPoint = false;
 
-    BeginTravel(playerBounceTargets[currentPlayerLaneIndex]);
+    Transform serveBounceTarget;
+
+    if (currentPlayerLaneIndex == 0)
+    {
+        serveBounceTarget = playerBounceCenterToLeft;
+    }
+    else if (currentPlayerLaneIndex == 2)
+    {
+        serveBounceTarget = playerBounceCenterToRight;
+    }
+    else
+    {
+        serveBounceTarget = playerBounceTargets[1];
+    }
+
+    BeginTravel(serveBounceTarget);
 }
     void UpdateTimingBarDuringPlayerHitPhase()
+{
+    if (!travelingToHitPoint) return;
+    if (currentTarget != playerTargets[currentPlayerLaneIndex]) return;
+    if (timingBarShownThisShot) return;
+
+    float distance = Vector3.Distance(transform.position, playerTargets[currentPlayerLaneIndex].position);
+    float timeToArrive = distance / Mathf.Max(ballSpeed, 0.01f);
+
+    float speedT = Mathf.InverseLerp(baseSpeed, timingBarSpeedReference, ballSpeed);
+    float leadTime = Mathf.Lerp(maxTimingLeadTime, minTimingLeadTime, speedT);
+
+    if (timeToArrive <= leadTime)
     {
-        if (!travelingToHitPoint) return;
-        if (currentTarget != playerTargets[currentPlayerLaneIndex]) return;
-        if (timingBarShownThisShot) return;
+        timingBarShownThisShot = true;
+        playerHasAttemptedHit = false;
 
-        float distance = Vector3.Distance(transform.position, playerTargets[currentPlayerLaneIndex].position);
-        float timeToArrive = distance / Mathf.Max(ballSpeed, 0.01f);
-
-        float speedT = Mathf.InverseLerp(baseSpeed, timingBarSpeedReference, ballSpeed);
-        float leadTime = Mathf.Lerp(maxTimingLeadTime, minTimingLeadTime, speedT);
-
-        if (timeToArrive <= leadTime)
-        {
-            timingBarShownThisShot = true;
-            playerHasAttemptedHit = false;
-
-            UpdateTimingBarDifficulty();
-            timingBarUI.ShowBar();
-        }
+        UpdateTimingBarDifficulty();
+        timingBarUI.ShowBar();
     }
+}
+
+bool IsPlayerSideBounceTarget(Transform target)
+{
+    if (target == null) return false;
+
+    if (currentPlayerLaneIndex >= 0 && currentPlayerLaneIndex < playerBounceTargets.Length)
+    {
+        if (target == playerBounceTargets[currentPlayerLaneIndex])
+            return true;
+    }
+
+    if (target == playerBounceCenterToLeft)
+        return true;
+
+    if (target == playerBounceCenterToRight)
+        return true;
+
+    return false;
+}
 
     void HandlePlayerInput()
     {
@@ -328,48 +379,35 @@ public class TennisBallController : MonoBehaviour
     }
 
     void HandleArrival()
+{
+    if (travelingToBounce)
     {
-        if (travelingToBounce)
+        travelingToBounce = false;
+        travelingToHitPoint = true;
+
+        if (IsPlayerSideBounceTarget(currentTarget))
         {
-            travelingToBounce = false;
-            travelingToHitPoint = true;
-
-            if (currentTarget == playerBounceTargets[currentPlayerLaneIndex])
-            {
-                timingBarShownThisShot = false;
-                BeginTravel(playerTargets[currentPlayerLaneIndex]);
-            }
-            else
-            {
-                BeginTravel(aiTargets[currentAILaneIndex]);
-            }
-            return;
-        }
-
-        if (travelingToHitPoint)
-        {
-            travelingToHitPoint = false;
-
-            if (currentTarget == playerTargets[currentPlayerLaneIndex])
-                ResolvePlayerHit();
-            else
-                ResolveAIHit();
-        }
-    }
-
-    void ResolvePlayerHit()
-    {
-        if (IsPlayerInRange() && playerHasAttemptedHit && playerTimedHitSuccessfully)
-        {
-            ReturnFromPlayer();
+            timingBarShownThisShot = false;
+            BeginTravel(playerTargets[currentPlayerLaneIndex]);
         }
         else
         {
-            gameManager.PlayerMissed();
-            playerServesNext = false;
-            StartPause();
+            BeginTravel(aiTargets[currentAILaneIndex]);
         }
+
+        return;
     }
+
+    if (travelingToHitPoint)
+    {
+        travelingToHitPoint = false;
+
+        if (currentTarget == playerTargets[currentPlayerLaneIndex])
+            ResolvePlayerHit();
+        else
+            ResolveAIHit();
+    }
+}
 
     void ResolveAIHit()
 {
@@ -403,69 +441,92 @@ public class TennisBallController : MonoBehaviour
 
         int aimZone = GetAimZone();
 
-        int bounceLane;
+        Transform bounceTarget;
         int hitLane;
 
-        GetShotPattern(currentPlayerLaneIndex, aimZone, out bounceLane, out hitLane);
-
-        Debug.Log(
-    "From Lane: " + currentPlayerLaneIndex +
-    " | Aim Position: " + playerAimPosition +
-    " | Aim Zone: " + aimZone +
-    " | Bounce Lane: " + bounceLane +
-    " | Hit Lane: " + hitLane +
-    " | Bounce Target: " + aiBounceTargets[bounceLane].name +
-    " | Hit Target: " + aiTargets[hitLane].name
-    );
+        GetShotPattern(currentPlayerLaneIndex, aimZone, out bounceTarget, out hitLane);
 
         currentAILaneIndex = hitLane;
 
         travelingToBounce = true;
         travelingToHitPoint = false;
 
-        BeginTravel(aiBounceTargets[bounceLane]);
-    }
-
-    public void SendToPlayer()
-    {
-        int lane = Random.Range(0, 3);
-
-        currentPlayerLaneIndex = lane;
-
-        playerHasAttemptedHit = false;
-        timingBarShownThisShot = false;
-
-        travelingToBounce = true;
-        travelingToHitPoint = false;
-
-        BeginTravel(playerBounceTargets[lane]);
+BeginTravel(bounceTarget);
     }
 
     int GetAimZone()
+{
+    if (playerAimPosition < 0.33f) return 0;
+    if (playerAimPosition < 0.66f) return 1;
+    return 2;
+}
+
+    void ResolvePlayerHit()
+{
+    if (IsPlayerInRange() && playerHasAttemptedHit && playerTimedHitSuccessfully)
     {
-        if (playerAimPosition < 0.33f) return 0;
-        if (playerAimPosition < 0.66f) return 1;
-        return 2;
+        ReturnFromPlayer();
+    }
+    else
+    {
+        if (gameManager != null)
+            gameManager.PlayerMissed();
+
+        playerServesNext = false;
+        StartPause();
+    }
+}
+
+public void SendToPlayer()
+{
+    int fromLane = currentAILaneIndex;
+    int targetLane = Random.Range(0, 3);
+
+    currentPlayerLaneIndex = targetLane;
+
+    playerHasAttemptedHit = false;
+    playerTimedHitSuccessfully = false;
+    timingBarShownThisShot = false;
+
+    travelingToBounce = true;
+    travelingToHitPoint = false;
+
+    Transform bounceTarget = playerBounceTargets[targetLane];
+
+    // Cross-court from AI left to player right
+    if (fromLane == 0 && targetLane == 2 && playerBounceCenterToRight != null)
+    {
+        bounceTarget = playerBounceCenterToRight;
+    }
+    // Cross-court from AI right to player left
+    else if (fromLane == 2 && targetLane == 0 && playerBounceCenterToLeft != null)
+    {
+        bounceTarget = playerBounceCenterToLeft;
+    }
+    // Otherwise same-lane / normal shots use original bounce targets
+
+    BeginTravel(bounceTarget);
+}
+   void GetShotPattern(int fromLane, int aimZone, out Transform bounceTarget, out int hitLane)
+{
+    // Default: straight lane shot
+    bounceTarget = aiBounceTargets[aimZone];
+    hitLane = aimZone;
+
+    // Player hits from left, aims right
+    if (fromLane == 0 && aimZone == 2)
+    {
+        bounceTarget = aiBounceCenterToRight;
+        hitLane = 2;
     }
 
-    void GetShotPattern(int fromLane, int aimZone, out int bounce, out int hit)
+    // Player hits from right, aims left
+    else if (fromLane == 2 && aimZone == 0)
     {
-        if (fromLane == 0)
-        {
-            bounce = aimZone == 2 ? 1 : aimZone;
-            hit = aimZone == 2 ? 2 : aimZone;
-        }
-        else if (fromLane == 2)
-        {
-            bounce = aimZone == 0 ? 1 : aimZone;
-            hit = aimZone == 0 ? 0 : aimZone;
-        }
-        else
-        {
-            bounce = aimZone;
-            hit = aimZone;
-        }
+        bounceTarget = aiBounceCenterToLeft;
+        hitLane = 0;
     }
+}
 
     void MoveBall()
     {
