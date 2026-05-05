@@ -199,12 +199,20 @@ public class BowlingBallController : MonoBehaviour
     // ✅ UPDATED RESET (always goes to original spawn)
     public void ResetBall()
     {
+        Debug.Log("ResetBall called: position reset to " + spawnPosition);
+
+        // Ensure the Rigidbody is moved directly to the spawn point.
+        rb.position = spawnPosition;
+        rb.rotation = spawnRotation;
         transform.position = spawnPosition;
         transform.rotation = spawnRotation;
+
         currentAngle = 0f;
 
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+        rb.Sleep();
+
         hasLaunched = false;
         pinSoundPlayed = false;
 

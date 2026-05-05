@@ -39,18 +39,19 @@ public class Scoretrack : MonoBehaviour
             Debug.LogError("Scoreboard is full");
             return;
         }
+
         if (throws == 1)
             scores[roundIndex].firstThrow = points;
         else
             scores[roundIndex].SecondThrow = points;
 
         if (scores[roundIndex].firstThrow == 10)
-            scores[roundIndex].SecondThrow = 0; // Strike
+            scores[roundIndex].SecondThrow = 0;
 
-        // Only update UI when round is complete (2nd throw or strike)
         if (throws == 2 || scores[roundIndex].firstThrow == 10)
         {
             UpdateScoreUI();
+            roundIndex++;
         }
     }
 
@@ -59,19 +60,24 @@ public class Scoretrack : MonoBehaviour
     {
         string scoreDisplay = "";
         int cumulative = 0;
+
         for (int i = 0; i < scores.Length; i++)
         {
-            int roundTotal = scores[i].firstThrow + scores[i].SecondThrow;
-            cumulative += roundTotal;
-            scoreDisplay += $"Round {i + 1}: {scores[i].firstThrow} | {scores[i].SecondThrow}\n";
+            int roundTotalLoop = scores[i].firstThrow + scores[i].SecondThrow;
+            cumulative += roundTotalLoop;
+            scoreDisplay += "Round " + (i + 1) + ": " + scores[i].firstThrow + " | " + scores[i].SecondThrow + "\n";
         }
-        // Only update the current round's TMP_Text
+
+        int roundTotal = scores[roundIndex].firstThrow + scores[roundIndex].SecondThrow;
+
         if (roundScoreTexts != null && roundIndex >= 0 && roundIndex < roundScoreTexts.Length && roundScoreTexts[roundIndex] != null)
         {
-            roundScoreTexts[roundIndex].text = $"R{roundIndex + 1}: {cumulative}";
+            roundScoreTexts[roundIndex].text = "R" + (roundIndex + 1) + ": " + roundTotal;
         }
+
         if (scoreText != null)
             scoreText.text = scoreDisplay;
+
         if (scoreTMPText != null)
             scoreTMPText.text = scoreDisplay;
     }

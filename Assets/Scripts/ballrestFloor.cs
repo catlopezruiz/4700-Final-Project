@@ -16,16 +16,18 @@ public class ballrestFloor : MonoBehaviour
 
     void Update()
     {
-        if (balltouched && ball.getLaunch() == true && pin.startcount == false)
+        if (balltouched && ball.getLaunch())
         {
             countdowntime -= Time.deltaTime;
         }
 
-        if (countdowntime <= 0.01f)
+        if (countdowntime <= 0.01f && balltouched && ball.getLaunch() && pin.startcount == false)
         {
+            Debug.Log("BallrestFloor: Resetting ball after reaching end without pins knocked");
             ball.setLaunch(false);
             timebar.ResetBar();
-            ball.ResetBall();
+
+            pin.endtimer();
 
             balltouched = false;
             countdowntime = 5f;
@@ -36,8 +38,9 @@ public class ballrestFloor : MonoBehaviour
     {
         if (other.CompareTag("Ball"))
         {
-            Debug.Log("ball touched");
+            Debug.Log("ball touched the end trigger");
             balltouched = true;
+            countdowntime = 2f;
         }
     }
 }

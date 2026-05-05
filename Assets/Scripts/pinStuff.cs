@@ -1,12 +1,6 @@
-using System.Net.NetworkInformation;
-using System.Threading;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Analytics;
-using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
-
 
 public class pinStuff : MonoBehaviour
 {
@@ -45,35 +39,26 @@ public class pinStuff : MonoBehaviour
     void Update()
     {
         if (cancel == true)
+        {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 SceneManager.LoadScene(0);
             }
-
-
-
-
+        }
 
         if (ball.getLaunch() == true)
         {
             for (int i = 0; i < allpins.Length; i++)
             {
-                if (allpins[i].transform.up.y < 0.7f)
+                if (allpins[i].transform.up.y < 0.7f && pinKnocked[i] == false)
                 {
-                    if (pinKnocked[i] == true)
-                        continue;
-
                     pinKnocked[i] = true;
                     countdowntime = 3.0f;
                     startcount = true;
                 }
-                else
-                {
-                    pinKnocked[i] = false;
-                }
             }
 
-            if (startcount)
+            if (startcount == true)
             {
                 countdowntime -= Time.deltaTime;
             }
@@ -89,9 +74,9 @@ public class pinStuff : MonoBehaviour
         }
     }
 
-    void endtimer()
+    public void endtimer()
     {
-        Debug.Log("called endtimer : \n");
+        Debug.Log("pinStuff: endtimer called");
 
         ball.ResetBall();
 
@@ -110,22 +95,31 @@ public class pinStuff : MonoBehaviour
                 }
             }
 
-            totalscore += score;
+            totalscore += pinsKnockedThisThrow;
 
             if (pinsKnockedThisThrow == 0)
             {
                 Debug.Log("No pins hit this throw");
             }
 
-            scoretrack.setScore(score, ball.getThrowCount());
+            scoretrack.setScore(pinsKnockedThisThrow, ball.getThrowCount());
 
             if (score == 10)
             {
-                if (ball.getThrowCount() == 1) Debug.Log("Strike!!!!!!!!");
-                if (ball.getThrowCount() == 2) Debug.Log("Spare!!!!!!!!");
+                if (ball.getThrowCount() == 1)
+                {
+                    Debug.Log("Strike!!!!!!!!");
+                }
+
+                if (ball.getThrowCount() == 2)
+                {
+                    Debug.Log("Spare!!!!!!!!");
+                }
             }
 
-            if (ball.getThrowCount() == 2 || score == 10)
+            bool frameEnded = ball.getThrowCount() == 2 || score == 10;
+
+            if (frameEnded == true)
             {
                 Debug.Log("checking that the pins tried to reset\n");
 
@@ -141,6 +135,9 @@ public class pinStuff : MonoBehaviour
 
                 ball.setThrowCount(0);
                 score = 0;
+            
+                roundIndex++;
+               
             }
             else
             {
@@ -158,20 +155,13 @@ public class pinStuff : MonoBehaviour
             }
         }
 
-        scoretrack.setRoundIndex(roundIndex);
-        roundIndex++;
-
         if (roundIndex == 10)
         {
             cancel = true;
             timebar.DisableBar();
             endcanvas.SetActive(true);
             scoreTMPTexttotal.text = "Congrats you won your total score is: " + totalscore + "\n press 1 to return to home!";
-
-
-
         }
-
     }
 
     public int getscore()
