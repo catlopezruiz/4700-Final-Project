@@ -22,6 +22,11 @@ public class TennisBallController : MonoBehaviour
     public Transform aiServePosition;
     public float aiServeDelay = 1.0f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip bounceSound;
+    public AudioClip hitSound;
+
     [Header("Serve Lanes")]
     public int playerServeTargetLane = 2;
     public int aiServeTargetLane = 2;
@@ -202,6 +207,11 @@ public class TennisBallController : MonoBehaviour
 
             if (playerTimedHitSuccessfully)
         {
+
+            if (audioSource != null && hitSound != null)
+                {
+                audioSource.PlayOneShot(hitSound);
+                }
             if (playerRacketSwing != null)
                 playerRacketSwing.Swing();
 
@@ -287,6 +297,11 @@ public class TennisBallController : MonoBehaviour
 
    void AIServeToPlayer()
 {
+    if (audioSource != null && hitSound != null)
+    {
+    audioSource.PlayOneShot(hitSound);
+    }
+    
     if (playerMovementScript != null)
         playerMovementScript.enabled = true;
 
@@ -331,7 +346,7 @@ public class TennisBallController : MonoBehaviour
     float timeToArrive = distance / Mathf.Max(ballSpeed, 0.01f);
 
     float speedT = Mathf.InverseLerp(baseSpeed, timingBarSpeedReference, ballSpeed);
-    float leadTime = Mathf.Lerp(maxTimingLeadTime, minTimingLeadTime, speedT);
+    float leadTime = Mathf.Lerp(minTimingLeadTime, maxTimingLeadTime, speedT);
 
     if (timeToArrive <= leadTime)
     {
@@ -382,6 +397,10 @@ bool IsPlayerSideBounceTarget(Transform target)
 {
     if (travelingToBounce)
     {
+        if (audioSource != null && bounceSound != null)
+        {
+            audioSource.PlayOneShot(bounceSound);
+        }
         travelingToBounce = false;
         travelingToHitPoint = true;
 
@@ -421,6 +440,11 @@ bool IsPlayerSideBounceTarget(Transform target)
     }
     else
     {
+
+        if (audioSource != null && hitSound != null)
+        {
+            audioSource.PlayOneShot(hitSound);
+        }
         // Trigger AI racket swing
         if (aiRacketSwing != null)
             aiRacketSwing.Swing();
@@ -433,6 +457,11 @@ bool IsPlayerSideBounceTarget(Transform target)
 
     public void ReturnFromPlayer()
     {
+        if (audioSource != null && hitSound != null)
+        {
+            audioSource.PlayOneShot(hitSound);
+        }
+
         if (playerRacketSwing != null)
             playerRacketSwing.Swing();
 
